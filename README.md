@@ -8,7 +8,7 @@ To get a minimal default working Blox setup, use the setup_blox.sh Script to get
 ```shell
 wget -c https://raw.githubusercontent.com/waltner-scantec/setup-scripts/main/setup_blox.sh
 chmod +x setup_blox.sh
-./setup_blox.sh --git-name="First Last" --git-email="f.last@ecotec-scantec.com" --sw-dir=/home/ai-blox/software/ . --bridge=192.168.100.10
+./setup_blox.sh --git-name="First Last" --git-email="f.last@ecotec-scantec.com" --sw-dir=/home/ai-blox/software/ --bridge=192.168.XXX.10 --hostname=product-company-site
 ```
 
 ## SmartScan Setup

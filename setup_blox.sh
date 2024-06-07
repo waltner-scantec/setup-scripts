@@ -5,10 +5,11 @@ GIT_NAME=""
 GIT_EMAIL=""
 SW_DIR=""
 BRIDGE_IP=""
+HOST_NAME=""
 
 # Function to print usage
 usage() {
-    echo "Usage: $0 --git-name=\"NAME\" --git-email=\"EMAIL\" --sw-dir=DIR --bridge=IP_ADDRESS"
+    echo "Usage: $0 ./setup_blox.sh --git-name=\"First Last\" --git-email=\"f.last@ecotec-scantec.com\" --sw-dir=/home/ai-blox/software/ --bridge=192.168.XXX.10 --hostname=product-company-site"
     exit 1
 }
 
@@ -27,6 +28,9 @@ while [ "$1" != "" ]; do
         --bridge=* )
             BRIDGE_IP="${1#*=}"
             ;;
+        --host-name=* )
+            HOST_NAME="${1#*=}"
+            ;;
         * )
             usage
             ;;
@@ -35,7 +39,7 @@ while [ "$1" != "" ]; do
 done
 
 # Check if all required arguments are provided
-if [ -z "$GIT_NAME" ] || [ -z "$GIT_EMAIL" ] || [ -z "$SW_DIR" ] || [ -z "$BRIDGE_IP" ]; then
+if [ -z "$GIT_NAME" ] || [ -z "$GIT_EMAIL" ] || [ -z "$SW_DIR" ] || [ -z "$BRIDGE_IP" ] || [ -z "$HOST_NAME" ]; then
     usage
 fi
 
@@ -47,10 +51,20 @@ fi
 
 
 echo "Starting setup in 5 seconds with the following settings:"
+echo "    Hostname: ${HOST_NAME}"
 echo "    Git Name: ${GIT_NAME}"
 echo "    Git Email: ${GIT_EMAIL}"
 echo "    Software base directory: ${SW_DIR}"
 echo "    Ethernet Bridge IP: ${BRIDGE_IP}"
+
+
+# Set the hostname if not already set
+CURRENT_HOSTNAME=$(hostname)
+if [ "$CURRENT_HOSTNAME" != "$HOST_NAME"  ]
+then
+    sudo hostnamectl set-hostname "$HOST_NAME"
+    echo "Hostname set to $HOST_NAME"
+fi
 
 # update system
 sudo apt-get update
@@ -69,13 +83,21 @@ git config --global user.name $GIT_NAME
 chsh -s /usr/bin/zsh
 
 # install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+if [ ! -d "${HOME}/.oh-my-zsh" ]
+then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
 
 # prepare Vundle for vim plugins
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+if [ ! -d "${HOME}/.vim/bundle/Vundle.vim" ]
+then
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+fi
 
 # append the network configuration to the /etc/network/interfaces file
-sudo cat <<EOL >> /etc/network/interfaces
+if ! grep -q "iface br0" /etc/network/interfaces
+then
+    sudo cat <<EOL >> /etc/network/interfaces
 
 # setup interfaces
 # One bridge to rule them all!
@@ -85,17 +107,29 @@ iface br0 inet static
     netmask 255.255.255.0
     bridge_ports eth1 eth2 eth3 eth4
 EOL
+fi
 
 # create software dir as used for all Blox products (SmartScan, CompoScan)
 mkdir -p $SW_DIR
 
 # clone blox repo
 cd $SW_DIR
-git clone https://gitlab.com/scantec-internal/hardware/blox
-cd blox
+BLOX_DIR=${SW_DIR}/blox
+if [ ! -d "${SW_}/blox" ]
+then
+    git clone https://gitlab.com/scantec-internal/hardware/blox $BLOX_DIR
+fi
+
+cd $BLOX_DIR
 
 # add vim config
-cp vim/.vimrc ${HOME}/.vimrc
+if [ ! -f "${HOME}/.vimrc" ]
+then
+    cp vim/.vimrc ${HOME}/.vimrc
+fi
 
 # add tmux config
-cp tmux/.tmux.conf ${HOME}/.tmux.conf
+if [ ! -f "${HOME}/.tmux.conf" ]
+then
+    cp tmux/.tmux.conf ${HOME}/.tmux.conf
+fi
