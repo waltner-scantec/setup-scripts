@@ -9,7 +9,7 @@ HOST_NAME=""
 
 # Function to print usage
 usage() {
-    echo "Usage: $0 ./setup_blox.sh --git-name=\"First Last\" --git-email=\"f.last@ecotec-scantec.com\" --sw-dir=/home/ai-blox/software/ --bridge=192.168.XXX.10 --hostname=product-company-site"
+    echo "Usage: $0 ./setup_blox.sh --git-name=\"First Last\" --git-email=\"f.last@ecotec-scantec.com\" --sw-dir=/home/ai-blox/software/ --bridge=192.168.XXX.10 --host-name=product-company-site"
     exit 1
 }
 
@@ -115,7 +115,7 @@ mkdir -p $SW_DIR
 # clone blox repo
 cd $SW_DIR
 BLOX_DIR=${SW_DIR}/blox
-if [ ! -d "${SW_}/blox" ]
+if [ ! -d "${SW_DIR}/blox" ]
 then
     git clone https://gitlab.com/scantec-internal/hardware/blox $BLOX_DIR
 fi
