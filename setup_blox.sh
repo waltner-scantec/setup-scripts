@@ -56,6 +56,7 @@ echo "    Git Name: ${GIT_NAME}"
 echo "    Git Email: ${GIT_EMAIL}"
 echo "    Software base directory: ${SW_DIR}"
 echo "    Ethernet Bridge IP: ${BRIDGE_IP}"
+sleep 5
 
 
 # Set the hostname if not already set
