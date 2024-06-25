@@ -50,13 +50,13 @@ if [[ ! $BRIDGE_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 
-echo "Starting setup in 5 seconds with the following settings:"
+echo "Starting setup in 10 seconds with the following settings:"
 echo "    Hostname: ${HOST_NAME}"
 echo "    Git Name: ${GIT_NAME}"
 echo "    Git Email: ${GIT_EMAIL}"
 echo "    Software base directory: ${SW_DIR}"
 echo "    Ethernet Bridge IP: ${BRIDGE_IP}"
-sleep 5
+sleep 10
 
 
 # Set the hostname if not already set
@@ -146,3 +146,9 @@ then
     rm -rf "${HOME}/Templates"
     rm -rf "${HOME}/Videos"
 fi
+
+
+# print further instructions
+echo "NEXT STEPS:"
+echo "1) run vim, ignore warnings and then `:PluginInstall`"
+echo "2) Setup for CompoScan or SmartScan"
