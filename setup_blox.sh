@@ -134,3 +134,15 @@ if [ ! -f "${HOME}/.tmux.conf" ]
 then
     cp tmux/.tmux.conf ${HOME}/.tmux.conf
 fi
+
+# remove unnecessary folders
+if [ -d "${HOME}/Documents" ]
+then
+    rm -rf "${HOME}/Documents"
+    rm -rf "${HOME}/Downloads"
+    rm -rf "${HOME}/Music"
+    rm -rf "${HOME}/Pictures"
+    rm -rf "${HOME}/Public"
+    rm -rf "${HOME}/Templates"
+    rm -rf "${HOME}/Videos"
+fi
