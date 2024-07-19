@@ -71,7 +71,7 @@ fi
 sudo apt-get update
 
 # install prerequisites
-sudo apt install -y aptitude git zsh vim curl wget tmux
+sudo apt install -y aptitude git zsh vim libcurl4 curl wget tmux nano htop tree
 
 # cache credentials for 90 days
 sudo -u ai-blox git config --global credential.helper 'cache --timeout=7776000'
@@ -81,7 +81,7 @@ sudo -u ai-blox git config --global user.email $GIT_EMAIL
 sudo -u ai-blox git config --global user.name $GIT_NAME
 
 # change default shell to zsh
-chsh -s /usr/bin/zsh
+sudo -u ai-blox chsh -s /usr/bin/zsh
 
 # install oh-my-zsh
 if [ ! -d "${HOME}/.oh-my-zsh" ]
@@ -99,21 +99,38 @@ fi
 if ! grep -q "iface br0" /etc/network/interfaces
 then
     sudo cat <<EOL >> /etc/network/interfaces
+# setup ethernet interfaces
+# two bridges to rule them all!
 
-# setup interfaces
-# Two bridges to rule them all!
 # SmartScan bridge
 auto br0
 iface br0 inet static
-    address 192.168.100.10
-    netmask 255.255.255.0
-    bridge_ports eth1 eth2 eth3 eth4
-# CompoScan bridge
-auto br1
-iface br1 inet static
     address 192.168.200.10
     netmask 255.255.255.0
     bridge_ports eth1 eth2 eth3 eth4
+    # with 4 cameras, eth0 needs to be added to brigde (comment the above line)
+    # bridge_ports eth1 eth2 eth3 eth4 eth0
+    bridge_stp off
+    bridge_fd 0
+    bridge_maxwait 0
+
+# CompoScan bridge
+auto br0:1
+iface br0:1 inet static
+    address 192.168.100.10
+    netmask 255.255.255.0
+
+# DHCP configuration for red side (setup)
+auto eth0
+iface eth0 inet dhcp
+# or static if it needs to be added to brigde (comment the above two lines)
+# iface eth0 inet manual
+
+# other PoE ports
+iface eth1 inet manual
+iface eth2 inet manual
+iface eth3 inet manual
+iface eth4 inet manual
 EOL
 fi
 
@@ -134,6 +151,8 @@ cd "${BLOX_DIR}"
 if [ ! -f "${HOME}/.vimrc" ]
 then
     sudo -u ai-blox cp vim/.vimrc ${HOME}/.vimrc
+    sudo -u ai-blox vim +PluginInstall +qall
+
 fi
 
 # add tmux config
@@ -152,4 +171,10 @@ then
     sudo -u ai-blox rm -rf "${HOME}/Public"
     sudo -u ai-blox rm -rf "${HOME}/Templates"
     sudo -u ai-blox rm -rf "${HOME}/Videos"
+fi
+
+# install MVS
+if [ ! -d "/opt/MVS/" ]
+then
+    install_mvs "${BLOX_DIR}"
 fi
