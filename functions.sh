@@ -154,7 +154,16 @@ function clone_and_install_repo {
     source "${venv_dir}/bin/activate"
 
     # Install the Python package
-    pip install -e .
+    if [ "$install_type" == "pip" ]
+    then
+        pip install -r requirements.txt
+    elif [ "$install_type" == "setup" ]
+    then
+	pip install -e .
+    else
+        echo "Unknown install type: $install_type"
+	exit 1
+    fi
     if [ $? -ne 0 ]; then
         echo "Failed to install package in $folder_name. Exiting."
         exit 1

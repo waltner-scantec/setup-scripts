@@ -3,7 +3,12 @@
 # import some helper functions
 source functions.sh
 
-# define repositories
+# define repositories for product
+# must be in the form: url target-folder install-type
+# where:
+#  url: gitlab/github url
+#  target-folder: subfolder in $SW_DIR to clone into
+#  install-type: pip (requirements.txt) or setup (setup.py)
 GIT_REPOS_CS=(
     "https://gitlab.com/scantec-internal/composcan/ai-blox-composcan.git ai-blox-composcan pip"
     "https://gitlab.com/scantec-internal/hardware/rfid.git rfid setup" 
@@ -11,6 +16,9 @@ GIT_REPOS_CS=(
     "https://gitlab.com/scantec-internal/pyutil.git pyutil setup"
     "https://gitlab.com/scantec-internal/hardware/maxxvision-cam.git maxxvision-cam setup"
     "https://gitlab.com/scantec-internal/hardware/usb-relay-controller.git usb-relay-controller setup"
+)
+GIT_REPOS_SS=(
+    "https://gitlab.com/scantec-internal/smartscan/ai-blox-smartscan.git ai-blox pip"
 )
 
 
@@ -50,7 +58,7 @@ if [ -z "$GIT_EMAIL" ] || [ -z "$SW_DIR" ] || [ -z "$PRODUCT" ]; then
 fi
 if [ ! -d "${SW_DIR}" ]
 then
-    echo "The base directory does not exist. Make sure you install the blox requirements first, that should create this folder! Otherwise, the proviced argument \"--sw-dir=${SW_DIR}\" might not be correct"
+    echo "The base directory does not exist. Make sure you install the blox (https://gitlab.com/scantec-internal/hardware/blox) requirements first, that should create this folder! Otherwise, the provided argument \"--sw-dir=${SW_DIR}\" might not be correct"
     exit -1
 fi
 
@@ -65,15 +73,23 @@ sleep 0
 # # update system
 # sudo apt-get update
 
+
 # clone repos for product and run install
 if [ "$PRODUCT" == "composcan" ]
 then
     echo "install all composcan stuff"
     setup_python_venv 3.8 composcan
+    # install all given repositories in $GIT_REPOS_CS into $SW_DIR and the venv "composcan"
     clone_and_install_repos "${GIT_REPOS_CS[@]}" "$SW_DIR" "composcan"
     # TODO install/prepare aws
+    # ...
+    echo "CompoScan install done."
 elif [ "$PRODUCT" == "smartscan" ]
 then
     echo "install all smartscan stuff"
-    echo "TODO!"
+    setup_python_venv 3.8 ai-blox
+    # install all given repositories in $GIT_REPOS_SS into $SW_DIR and the venv "ai-blox"
+    clone_and_install_repos "${GIT_REPOS_SS[@]}" "$SW_DIR" "ai-blox"
+    echo "SmartScan install done."
 fi
+
