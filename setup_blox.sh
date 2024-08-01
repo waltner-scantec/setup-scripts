@@ -171,7 +171,7 @@ if command -v python3.8 &>/dev/null; then
     echo "!!! python3.8 has already been installed..."
 else
     echo "!!! installing python3.8..."
-    sudo aptitude install -y python3.8 python3.8-pip python3-venv
+    sudo aptitude install -y python3.8 python3.8-pip python3.8-venv
     sudo pip3 install --upgrade pip
     sudo pip3 install --upgrade pip
 fi
