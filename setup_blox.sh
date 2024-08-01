@@ -116,9 +116,9 @@ then
     echo "!!! setting network configuration (br0)..."
     sudo cat <<EOL >> /etc/network/interfaces
 # setup ethernet interfaces
-# two bridges to rule them all!
+# one bridge to rule them all!
 
-# SmartScan bridge
+# bridge for SmartScan and CompoScan
 auto br0
 iface br0 inet static
     address 192.168.200.10
@@ -129,12 +129,6 @@ iface br0 inet static
     bridge_stp off
     bridge_fd 0
     bridge_maxwait 0
-
-# CompoScan bridge
-auto br0:1
-iface br0:1 inet static
-    address 192.168.100.10
-    netmask 255.255.255.0
 
 # DHCP configuration for red side (setup)
 auto eth0
