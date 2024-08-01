@@ -57,7 +57,7 @@ echo "    Software base directory: ${SW_DIR}"
 sleep $CONFIRMATION_SLEEP_SEC
 
 echo "!!! changing ownership of home..."
-sudo chown -R ai-blox:ai-blox /home/a-blox/
+sudo chown -R ai-blox:ai-blox /home/ai-blox/
 
 echo "!!! setting locale..."
 set_locale
